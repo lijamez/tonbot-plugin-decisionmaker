@@ -18,7 +18,7 @@ public class DecisionMakerPlugin extends TonbotPlugin {
 	public DecisionMakerPlugin(TonbotPluginArgs args) {
 		super(args);
 
-		this.injector = Guice.createInjector(new DecisionMakerModule(args.getPrefix()));
+		this.injector = Guice.createInjector(new DecisionMakerModule(args.getPrefix(), args.getBotUtils()));
 	}
 
 	@Override

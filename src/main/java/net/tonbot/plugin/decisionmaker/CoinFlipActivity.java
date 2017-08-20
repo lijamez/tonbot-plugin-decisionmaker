@@ -1,6 +1,8 @@
 package net.tonbot.plugin.decisionmaker;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import com.google.inject.Inject;
 
 import net.tonbot.common.Activity;
 import net.tonbot.common.ActivityDescriptor;
@@ -14,6 +16,15 @@ class CoinFlipActivity implements Activity {
 			.description("Flips a coin.")
 			.build();
 
+	private final BotUtils botUtils;
+	private final Random random;
+	
+	@Inject
+	public CoinFlipActivity(BotUtils botUtils, Random random) {
+		this.botUtils = Preconditions.checkNotNull(botUtils, "botUtils must be non-null.");
+		this.random = Preconditions.checkNotNull(random, "random must be non-null.");
+	}
+	
 	@Override
 	public ActivityDescriptor getDescriptor() {
 		return ACTIVITY_DESCRIPTOR;
@@ -22,12 +33,12 @@ class CoinFlipActivity implements Activity {
 	@Override
 	public void enact(MessageReceivedEvent event, String args) {
 		String result;
-		if (Math.random() >= 0.5) {
+		if (random.randomLongBetween(0, 1) == 0) {
 			result = "Heads";
 		} else {
 			result = "Tails";
 		}
 
-		BotUtils.sendMessage(event.getChannel(), result);
+		botUtils.sendMessage(event.getChannel(), result);
 	}
 }

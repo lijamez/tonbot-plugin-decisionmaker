@@ -2,14 +2,16 @@ package net.tonbot.plugin.decisionmaker;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import com.google.inject.Inject;
 
 import net.tonbot.common.Activity;
 import net.tonbot.common.ActivityDescriptor;
 import net.tonbot.common.BotUtils;
+import net.tonbot.common.TonbotBusinessException;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
 
 class NumberPickerActivity implements Activity {
@@ -19,6 +21,15 @@ class NumberPickerActivity implements Activity {
 			.parameters(ImmutableList.of("N", "M"))
 			.description("Picks a number between two other integers N and M")
 			.build();
+
+	private final BotUtils botUtils;
+	private final Random random;
+
+	@Inject
+	public NumberPickerActivity(BotUtils botUtils, Random random) {
+		this.botUtils = Preconditions.checkNotNull(botUtils, "botUtils must be non-null.");
+		this.random = Preconditions.checkNotNull(random, "random must be non-null.");
+	}
 
 	@Override
 	public ActivityDescriptor getDescriptor() {
@@ -30,10 +41,10 @@ class NumberPickerActivity implements Activity {
 		// Let's see if we can parse the number range.
 		List<String> tokens = Arrays.asList(args.split(" "));
 
-		List<Integer> ints = tokens.stream()
+		List<Long> numbers = tokens.stream()
 				.map(token -> {
 					try {
-						return Integer.parseInt(token);
+						return Long.parseLong(token);
 					} catch (NumberFormatException e) {
 						return null;
 					}
@@ -41,17 +52,16 @@ class NumberPickerActivity implements Activity {
 				.filter(value -> value != null)
 				.collect(Collectors.toList());
 
-		if (ints.size() != 2) {
-			BotUtils.sendMessage(event.getChannel(), "You need to provide exactly two integers.");
-			return;
+		if (numbers.size() != 2) {
+			throw new TonbotBusinessException("You need to provide exactly two integers.");
 		}
 
-		ints = ints.stream()
+		numbers = numbers.stream()
 				.sorted()
 				.collect(Collectors.toList());
 
-		int decision = ThreadLocalRandom.current().nextInt(ints.get(0), ints.get(1) + 1);
+		long decision = random.randomLongBetween(numbers.get(0), numbers.get(1));
 
-		BotUtils.sendMessage(event.getChannel(), "I pick... **" + decision + "**");
+		botUtils.sendMessage(event.getChannel(), "I pick... **" + decision + "**");
 	}
 }
