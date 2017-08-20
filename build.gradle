@@ -27,7 +27,7 @@ dependencies {
 	implementation group: 'com.github.austinv11', name: 'Discord4J', version: '2.8.4'
 	
 	implementation group: 'com.google.inject', name: 'guice', version: '4.1.0'
-	implementation group: 'com.google.guava', name: 'guava', version: '19.0'
+	implementation group: 'com.google.guava', name: 'guava', version: '23.0'
 	implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.6'
 	implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
 	
