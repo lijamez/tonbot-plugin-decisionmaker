@@ -17,7 +17,7 @@ import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedE
 class NumberPickerActivity implements Activity {
 
 	private static final ActivityDescriptor ACTIVITY_DESCRIPTOR = ActivityDescriptor.builder()
-			.route(ImmutableList.of("pickanumber"))
+			.route("pickanumber")
 			.parameters(ImmutableList.of("N", "M"))
 			.description("Picks a number between two other integers N and M")
 			.build();

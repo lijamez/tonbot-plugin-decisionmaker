@@ -1,7 +1,6 @@
 package net.tonbot.plugin.decisionmaker;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 
 import net.tonbot.common.Activity;
@@ -12,7 +11,7 @@ import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedE
 class CoinFlipActivity implements Activity {
 
 	private static final ActivityDescriptor ACTIVITY_DESCRIPTOR = ActivityDescriptor.builder()
-			.route(ImmutableList.of("coinflip"))
+			.route("coinflip")
 			.description("Flips a coin.")
 			.build();
 

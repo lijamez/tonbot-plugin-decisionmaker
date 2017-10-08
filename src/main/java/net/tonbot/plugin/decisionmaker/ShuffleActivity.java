@@ -19,7 +19,7 @@ import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedE
 class ShuffleActivity implements Activity {
 
 	private static final ActivityDescriptor ACTIVITY_DESCRIPTOR = ActivityDescriptor.builder()
-			.route(ImmutableList.of("shuffle"))
+			.route("shuffle")
 			.parameters(ImmutableList.of("list of items"))
 			.description("Randomizes a comma separated list.")
 			.build();
