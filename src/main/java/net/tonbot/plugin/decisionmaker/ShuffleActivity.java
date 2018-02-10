@@ -12,16 +12,16 @@ import com.google.inject.Inject;
 
 import net.tonbot.common.Activity;
 import net.tonbot.common.ActivityDescriptor;
+import net.tonbot.common.ActivityUsageException;
 import net.tonbot.common.BotUtils;
-import net.tonbot.common.TonbotBusinessException;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
 
 class ShuffleActivity implements Activity {
 
 	private static final ActivityDescriptor ACTIVITY_DESCRIPTOR = ActivityDescriptor.builder()
 			.route("shuffle")
-			.parameters(ImmutableList.of("list of items"))
-			.description("Randomizes a comma separated list.")
+			.parameters(ImmutableList.of("<comma separated list>"))
+			.description("Randomizes a comma separated list of items.")
 			.build();
 
 	private static final String DELIMITER = ",";
@@ -48,7 +48,7 @@ class ShuffleActivity implements Activity {
 				.collect(Collectors.toList());
 		
 		if (items.size() <= 1) {
-			throw new TonbotBusinessException("You need to provide two or more comma-separated items.");
+			throw new ActivityUsageException("You need to provide two or more comma-separated items.");
 		}
 
 		List<String> shuffledItems = random.shuffle(items);

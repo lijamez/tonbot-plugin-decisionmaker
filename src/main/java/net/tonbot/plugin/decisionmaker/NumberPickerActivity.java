@@ -10,16 +10,16 @@ import com.google.inject.Inject;
 
 import net.tonbot.common.Activity;
 import net.tonbot.common.ActivityDescriptor;
+import net.tonbot.common.ActivityUsageException;
 import net.tonbot.common.BotUtils;
-import net.tonbot.common.TonbotBusinessException;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
 
 class NumberPickerActivity implements Activity {
 
 	private static final ActivityDescriptor ACTIVITY_DESCRIPTOR = ActivityDescriptor.builder()
 			.route("pickanumber")
-			.parameters(ImmutableList.of("N", "M"))
-			.description("Picks a number between two other integers N and M")
+			.parameters(ImmutableList.of("<N>", "<M>"))
+			.description("Picks a number between two other integers N and M, inclusive.")
 			.build();
 
 	private final BotUtils botUtils;
@@ -53,7 +53,7 @@ class NumberPickerActivity implements Activity {
 				.collect(Collectors.toList());
 
 		if (numbers.size() != 2) {
-			throw new TonbotBusinessException("You need to provide exactly two integers.");
+			throw new ActivityUsageException("You need to provide exactly two integers.");
 		}
 
 		numbers = numbers.stream()
