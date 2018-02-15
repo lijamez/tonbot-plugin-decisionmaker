@@ -22,15 +22,19 @@ class NumberPickerActivityTest extends Specification {
 		this.numberPickerActivity = new NumberPickerActivity(mockedBotUtils, mockedRandom)
 	}
 	
-	def "successfully pick a number in a range"(String args, long parsedSmall, long parsedLarge, long pickedNumber) {
+	def "successfully pick a number in a range"(long n, long m, long pickedNumber) {
 		given:
 		MessageReceivedEvent mockedEvent = Mock()
 		
+		NumberPickerRequest request = new NumberPickerRequest()
+		request.n = n;
+		request.m = m;
+		
 		when:
-		numberPickerActivity.enact(mockedEvent, args)
+		numberPickerActivity.enact(mockedEvent, request)
 		
 		then:
-		1 * mockedRandom.randomLongBetween(parsedSmall, parsedLarge) >> pickedNumber
+		1 * mockedRandom.randomLongBetween(Collections.min([n, m]), Collections.max([n, m])) >> pickedNumber
 		
 		then:
 		1 * mockedEvent.getChannel() >> mockedChannel
@@ -40,31 +44,10 @@ class NumberPickerActivityTest extends Specification {
 		0 * _
 		
 		where:
-		args       | parsedSmall | parsedLarge | pickedNumber
-		"1 100"    | 1           | 100         | 50
-		"0  -5"    | -5          | 0           | -1
-		"1 and 10" | 1           | 10          | 10
-	}
-	
-	def "bad input - too many or too few numbers"(String args) {
-		given:
-		MessageReceivedEvent mockedEvent = Mock()
-		
-		when:
-		numberPickerActivity.enact(mockedEvent, args)
-		
-		then:
-		thrown TonbotBusinessException
-		
-		then:
-		0 * _
-		
-		where:
-		args       | _
-		"1 50 100" | _
-		"2"        | _
-		"lol wut"  | _
-		""         | _
-		" "        | _
+		n   | m    | pickedNumber
+		1   | 100  | 50
+		-5  | 0    | -1
+		1   | 10   | 10
+		10  | 1    | 5
 	}
 }

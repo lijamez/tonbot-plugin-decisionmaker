@@ -22,46 +22,24 @@ class ShuffleActivityTest extends Specification {
 		this.shuffleActivity = new ShuffleActivity(mockedBotUtils, mockedRandom)
 	}
 	
-	def "successfully shuffle a list of items"(String args, List<String> parsedItems, List<String> shuffledItems, String response) {
+	def "successfully shuffle a list of items"() {
 		given:
 		MessageReceivedEvent mockedEvent = Mock()
 		
+		ShuffleRequest request = new ShuffleRequest()
+		request.parseList("foo,bar,baz")
+		
 		when:
-		shuffleActivity.enact(mockedEvent, args)
+		shuffleActivity.enact(mockedEvent, request)
 		
 		then:
-		1 * mockedRandom.shuffle(parsedItems) >> shuffledItems
+		1 * mockedRandom.shuffle(["foo", "bar", "baz"]) >> ["bar", "baz", "foo"]
 		
 		then:
 		1 * mockedEvent.getChannel() >> mockedChannel
-		1 * mockedBotUtils.sendMessage(mockedChannel, response)
+		1 * mockedBotUtils.sendMessage(mockedChannel, "bar\nbaz\nfoo")
 		
 		then:
 		0 * _
-		
-		where:
-		args          | parsedItems           | shuffledItems         | response
-		"foo,bar,baz" | ["foo", "bar", "baz"] | ["bar", "baz", "foo"] | "bar\nbaz\nfoo"
-		"foo,bar"     | ["foo", "bar"]        | ["bar", "foo"]        | "bar\nfoo"
-	}
-	
-	def "bad input - no items to shuffle"(String args) {
-		given:
-		MessageReceivedEvent mockedEvent = Mock()
-		
-		when:
-		shuffleActivity.enact(mockedEvent, args)
-		
-		then:
-		thrown TonbotBusinessException
-		
-		then:
-		0 * _
-		
-		where:
-		args      | _
-		"foo"     | _
-		"foo bar" | _
-		""        | _
 	}
 }

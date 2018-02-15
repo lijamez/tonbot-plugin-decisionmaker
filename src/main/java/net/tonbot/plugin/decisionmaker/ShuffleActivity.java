@@ -1,8 +1,6 @@
 package net.tonbot.plugin.decisionmaker;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -12,44 +10,33 @@ import com.google.inject.Inject;
 
 import net.tonbot.common.Activity;
 import net.tonbot.common.ActivityDescriptor;
-import net.tonbot.common.ActivityUsageException;
 import net.tonbot.common.BotUtils;
+import net.tonbot.common.Enactable;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
 
 class ShuffleActivity implements Activity {
 
-	private static final ActivityDescriptor ACTIVITY_DESCRIPTOR = ActivityDescriptor.builder()
-			.route("shuffle")
-			.parameters(ImmutableList.of("<comma separated list>"))
-			.description("Randomizes a comma separated list of items.")
-			.build();
-
-	private static final String DELIMITER = ",";
+	private static final ActivityDescriptor ACTIVITY_DESCRIPTOR = ActivityDescriptor.builder().route("shuffle")
+			.parameters(ImmutableList.of("<comma separated list of items>"))
+			.description("Randomizes a comma separated list of items.").build();
 
 	private final BotUtils botUtils;
 	private final Random random;
-	
+
 	@Inject
 	public ShuffleActivity(BotUtils botUtils, Random random) {
 		this.botUtils = Preconditions.checkNotNull(botUtils, "botUtils must be non-null.");
 		this.random = Preconditions.checkNotNull(random, "random must be non-null.");
 	}
-	
+
 	@Override
 	public ActivityDescriptor getDescriptor() {
 		return ACTIVITY_DESCRIPTOR;
 	}
 
-	@Override
-	public void enact(MessageReceivedEvent messageReceivedEvent, String args) {
-		List<String> items = Arrays.asList(StringUtils.split(args, DELIMITER))
-				.stream()
-				.map(item -> StringUtils.trim(item))
-				.collect(Collectors.toList());
-		
-		if (items.size() <= 1) {
-			throw new ActivityUsageException("You need to provide two or more comma-separated items.");
-		}
+	@Enactable
+	public void enact(MessageReceivedEvent messageReceivedEvent, ShuffleRequest request) {
+		List<String> items = request.getItems();
 
 		List<String> shuffledItems = random.shuffle(items);
 

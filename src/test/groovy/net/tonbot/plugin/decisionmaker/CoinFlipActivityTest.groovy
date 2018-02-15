@@ -26,7 +26,7 @@ class CoinFlipActivityTest extends Specification {
 		MessageReceivedEvent mockedEvent = Mock()
 		
 		when:
-		coinFlipActivity.enact(mockedEvent, "")
+		coinFlipActivity.enact(mockedEvent)
 		
 		then:
 		1 * mockedRandom.randomLongBetween(0, 1) >> randomResult

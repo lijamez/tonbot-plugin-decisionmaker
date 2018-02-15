@@ -29,10 +29,7 @@ class DecisionMakerModule extends AbstractModule {
 
 	@Provides
 	@Singleton
-	Set<Activity> activities(
-			CoinFlipActivity coinFlip,
-			NumberPickerActivity numberPicker,
-			ShuffleActivity shuffler) {
+	Set<Activity> activities(CoinFlipActivity coinFlip, NumberPickerActivity numberPicker, ShuffleActivity shuffler) {
 		return ImmutableSet.of(coinFlip, numberPicker, shuffler);
 	}
 }

@@ -1,6 +1,5 @@
 package net.tonbot.plugin.decisionmaker;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -10,17 +9,15 @@ import com.google.inject.Inject;
 
 import net.tonbot.common.Activity;
 import net.tonbot.common.ActivityDescriptor;
-import net.tonbot.common.ActivityUsageException;
 import net.tonbot.common.BotUtils;
+import net.tonbot.common.Enactable;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
 
 class NumberPickerActivity implements Activity {
 
-	private static final ActivityDescriptor ACTIVITY_DESCRIPTOR = ActivityDescriptor.builder()
-			.route("pickanumber")
+	private static final ActivityDescriptor ACTIVITY_DESCRIPTOR = ActivityDescriptor.builder().route("pickanumber")
 			.parameters(ImmutableList.of("<N>", "<M>"))
-			.description("Picks a number between two other integers N and M, inclusive.")
-			.build();
+			.description("Picks a number between two other integers N and M, inclusive.").build();
 
 	private final BotUtils botUtils;
 	private final Random random;
@@ -36,28 +33,9 @@ class NumberPickerActivity implements Activity {
 		return ACTIVITY_DESCRIPTOR;
 	}
 
-	@Override
-	public void enact(MessageReceivedEvent event, String args) {
-		// Let's see if we can parse the number range.
-		List<String> tokens = Arrays.asList(args.split(" "));
-
-		List<Long> numbers = tokens.stream()
-				.map(token -> {
-					try {
-						return Long.parseLong(token);
-					} catch (NumberFormatException e) {
-						return null;
-					}
-				})
-				.filter(value -> value != null)
-				.collect(Collectors.toList());
-
-		if (numbers.size() != 2) {
-			throw new ActivityUsageException("You need to provide exactly two integers.");
-		}
-
-		numbers = numbers.stream()
-				.sorted()
+	@Enactable
+	public void enact(MessageReceivedEvent event, NumberPickerRequest request) {
+		List<Long> numbers = ImmutableList.of(request.getN(), request.getM()).stream().sorted()
 				.collect(Collectors.toList());
 
 		long decision = random.randomLongBetween(numbers.get(0), numbers.get(1));
