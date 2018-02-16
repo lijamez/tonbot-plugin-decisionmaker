@@ -9,7 +9,7 @@ import net.tonbot.common.Param;
 
 @ToString
 @EqualsAndHashCode
-public class NumberPickerRequest {
+class NumberPickerRequest {
 
 	@Getter
 	@Param(name = "N", ordinal = 0, description = "A whole number.")

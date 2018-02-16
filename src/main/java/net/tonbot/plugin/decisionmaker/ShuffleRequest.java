@@ -15,7 +15,7 @@ import net.tonbot.common.Param;
 
 @ToString
 @EqualsAndHashCode
-public class ShuffleRequest {
+class ShuffleRequest {
 
 	private static final String DELIMITER = ",";
 
